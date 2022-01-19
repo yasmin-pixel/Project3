@@ -102,26 +102,15 @@ router.get("/albums/:id", (req, res) => {
 });
 
 router.post("/tracks", (req, res) => {
-  {
-    User.findMany({ username: req.body.username }, (error, user) => {
-      if (user) {
-        user.authenticate(req.body.password, (error, user) => {
-          if (error) {
-            res.status(401).json({ message: "invalid username or password" });
-          } else {
-            const unique_identifier = { username: user.username };
-            const token = jwt.sign(unique_identifier, jwtOptions.secretOrKey);
-            res.status(200).json({
-              message: `welcome, you have successfully sgined in, ${user.username}`,
-              token: token,
-            });
-          }
-        });
-      } else {
-        res.status(401).json({ message: "invalid username or password" });
-      }
-    });
-  }
+  Track.find(function (error, tracks) {
+    if (error) {
+      res.status(400).json({
+        message: "track not found",
+      });
+    } else {
+      res.json(tracks);
+    }
+  });
 });
 
 router.get("/artists/:id", (req, res) => {
